@@ -1,0 +1,90 @@
+name: CI/CD Pipeline
+on: 
+  push:
+    branches:
+      - master
+      - main
+jobs:
+  checkout:
+    name: Checkout code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output event data
+        run: echo "${{ toJSON(github.event) }}"  ### This step outputs the event data
+      - name: Get code
+        uses: actions/checkout@v3
+  setup:
+    name: Setup Environment
+    needs: checkout
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+  install:
+    name: Install Dependencies
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci
+
+
+  test:
+    name: Run Tests
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run test
+
+  build:
+    name: Build App
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm run build
+
+  package:
+    name: Package App
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Packaging build artifacts..."
+
+  upload-artifacts:
+    name: Upload Artifacts
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: ./dist
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: upload-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying to staging..."
+
+  approval:
+    name: Await Manual Approval
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://your-production-site.com
+    steps:
+      - name: Wait for approval
+        run: echo "Waiting for manual approval..."
+
+  deploy-prod:
+    name: Deploy to Production
+    needs: approval
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying to production..."
