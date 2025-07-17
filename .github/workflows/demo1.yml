@@ -22,7 +22,7 @@ jobs:
         run: echo "Deploying..."
 
   deploy:
-    needs: deploy
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Output events data  ## This step outputs the event data
