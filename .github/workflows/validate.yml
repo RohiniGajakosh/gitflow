@@ -1,4 +1,4 @@
-name: Validate Pipeline
+name: ValidatePipeline
 
 on:
   push:

@@ -1,8 +1,8 @@
 name: Test
 on:
   workflow_run:
-    workflows: [ validate_pipline ]
-    types: ['completed']
+    workflows: [ValidatePipeline]
+    types: ["completed"]
   push:
     branches:
       - master
