@@ -1,5 +1,5 @@
 name: CI/CD Pipeline
-on: 
+on:
   push:
     branches:
       - master
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Output event data
-        run: echo "${{ toJSON(github.event) }}"  ### This step outputs the event data
+        run: echo "${{ toJSON(github.event) }}" ### This step outputs the event data
       - name: Get code
         uses: actions/checkout@v3
   setup:
@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
   install:
     name: Install Dependencies
     needs: setup
@@ -30,14 +30,22 @@ jobs:
       - uses: actions/checkout@v3
       - run: npm ci
 
-
   test:
     name: Run Tests
     needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: npm run test
+      - name: Install dependencies
+        run: npm install
+      - name: Install Vitest
+        run: npm install --save-dev vitest
+      - name: Run unit tests
+        run: npm run test
+      - name: Run integration tests
+        run: npm run test:integration
+      - name: Run e2e tests
+        run: npm run test
 
   build:
     name: Build App
