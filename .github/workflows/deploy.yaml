@@ -1,3 +1,4 @@
+##https://docs.github.com/en/actions/concepts/workflows-and-actions/contexts
 name: deploy Pipeline
 on:
   push:
@@ -50,9 +51,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Vitest
-        run: npm install --save-dev vitest ## Install Vitest for testing
-      - name: Bild Project
+        run: npm install --save-dev vitest ## install Vitest for testing, if not already installed
+      - name: Build Project
         run: npm run build
+      - name: Verify dist directory
+        run: |
+          ls la 
+          ls -la ./dist/
 
   package:
     name: Package App
