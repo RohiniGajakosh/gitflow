@@ -43,12 +43,13 @@ jobs:
       - name: Run unit tests
         run: npm run test
 
-
   build:
     name: Build App
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Install Vitest
+        run: npm install --save-dev vitest ## Install Vitest for testing
       - uses: actions/checkout@v3
       - run: npm run build
 
