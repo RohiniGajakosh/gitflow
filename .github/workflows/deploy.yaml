@@ -56,7 +56,9 @@ jobs:
         run: npm run build
       - name: Verify dist directory
         run: |
-          ls la 
+          echo "Verifying current working directory..."
+          ls -la 
+          echo "Verifying dist directory  contents"
           ls -la ./dist/
 
   package:
