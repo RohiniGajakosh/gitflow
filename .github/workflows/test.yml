@@ -5,7 +5,7 @@ on:
     types: [completed]
   push:
     branches:
-      - master
+      - master ## only pushes to master branch will trigger this workflow
       - main
 jobs:
   test:
