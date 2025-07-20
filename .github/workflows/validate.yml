@@ -1,9 +1,9 @@
 name: CI/CD Pipeline
 
-on: 
+on:
   push:
     branches:
-      - master
+      - master ### only pushes to master branch will trigger this workflow
       - main
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Install dependencies
         run: npm ci
-      - name: Test code 
+      - name: Test code
         run: npm run test
 
   build:
