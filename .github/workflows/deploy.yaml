@@ -67,11 +67,11 @@ jobs:
           echo "Build dist directory contents:"
           ls -la ./dist/
           echo "Checking index.html file if it exists...."
-          if [ ! -f dist/assets/index.html ]; then 
+          if [ ! -f dist/index.html ]; then 
             echo "Warning: index.html file is missing in dist directory!!"
             exit 1
           fi
-          if [ ! -f dist/assets/index.html ]; then
+          if [ ! -f dist/index.html ]; then
             echo "ERROR: index.html file is missing in dist/assets directory!!"
             exit 1
           fi
