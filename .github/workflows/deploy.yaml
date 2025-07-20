@@ -73,6 +73,9 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - name: Install Vitest
+        run: npm install --save-dev vitest
       - name: Build Project
         run: npm run build
       - name: Verify dist directory
