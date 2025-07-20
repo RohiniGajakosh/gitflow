@@ -60,10 +60,6 @@ jobs:
           ls -la 
           echo "Verifying dist directory  contents"
           ls -la ./dist/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: ./dist
 
   package:
     name: Package App
@@ -72,10 +68,27 @@ jobs:
     steps:
       - run: echo "Packaging build artifacts..."
 
+  upload-artifacts:
+    name: Upload Artifacts
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Project
+        run: npm run build
+      - name: Verify dist directory
+        run: |
+          echo "Verifying current working directory..."
+          ls -la 
+          echo "Verifying dist directory  contents"
+          ls -la ./dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./dist
 
   deploy-staging:
     name: Deploy to Staging
-    needs: package
+    needs: upload-artifacts
     runs-on: ubuntu-latest
     steps:
       - run: echo "Deploying to staging..."
