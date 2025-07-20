@@ -33,7 +33,7 @@ jobs:
 
   test:
     name: Run Tests
-    needs: lint
+    needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
