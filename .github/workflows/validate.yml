@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Validate Pipeline
 
 on:
   push:
