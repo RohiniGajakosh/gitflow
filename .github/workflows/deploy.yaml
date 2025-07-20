@@ -75,12 +75,8 @@ jobs:
             echo "ERROR: index.html file is missing in dist/assets directory!!"
             exit 1
           fi
-          if [ ! -f dist/assets/index.js ]; then
-            echo "ERROR: index.js file is missing in dist/assets directory!!"
-            exit 1
-          fi
-          if [ ! -f dist/assets/index.css ]; then
-            echo "ERROR: index.css file is missing in dist/assets directory!!"
+          if [ ! -f dist/assets/*.png ]; then
+            echo "ERROR: image file is missing in dist/assets directory!!"
             exit 1
           fi
           if ! ls dist/assets/*.js 1> /dev/null 2>&1; then
