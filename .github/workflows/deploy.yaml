@@ -7,8 +7,8 @@ on:
   ##    - master
   ##    - main
   workflow_run:
-    workflows: [ Test ]
-    types: ['completed']
+    workflows: [Test]
+    types: ["completed"]
 jobs:
   checkout:
     name: Checkout code
@@ -62,39 +62,37 @@ jobs:
         run: |
           echo "Verifying current working directory..."
           pwd
-          echo "Verifying  directory  contents"
+          echo "Verifying directory contents"
           ls -la
-          - name: Debug - Show directory contents
-          run: | 
-            echo "Build dist directory contents:"
-            ls -la ./dist/
-            echo "Checking index.html file if it exists...."
-            if [! -f dist/index.html ]; then 
-              echo "ERROR: index.heml file is missing in dist directory!!"
+          echo "Build dist directory contents:"
+          ls -la ./dist/
+          echo "Checking index.html file if it exists...."
+          if [ ! -f dist/index.html ]; then 
+            echo "ERROR: index.html file is missing in dist directory!!"
             exit 1
-            fi
-            if [ ! -f dist/assets/index.html ]; then
-                 echo "ERROR: index.html file is missing in dist directory!!"
-                 exit 1
-                fi   
-                [ ! -f dist/assets/index.js ]; then
-                 echo "ERROR: index.js file is missing in dist/assets directory!!"
-                 exit 1
-                fi
-                [ ! -f dist/assets/index.css ]; then
-                 echo "ERROR: index.css file is missing in dist/assets directory!!"
-                  exit 1
-                fi
-                [ ! -f dist/assets/*.js ]; then
-                 echo "ERROR: No JavaScript files found in dist/assets directory!!"
-                  exit 1
-                fi 
-                [ ! -f dist/assets/*.css ] then 
-                 echo "ERROR: No CSS files found in dist/assets directory!!"
-                  exit 1
-                fi
-                echo "Complete dist directory list"
-                ls -R ./dist
+          fi
+          if [ ! -f dist/assets/index.html ]; then
+            echo "ERROR: index.html file is missing in dist/assets directory!!"
+            exit 1
+          fi
+          if [ ! -f dist/assets/index.js ]; then
+            echo "ERROR: index.js file is missing in dist/assets directory!!"
+            exit 1
+          fi
+          if [ ! -f dist/assets/index.css ]; then
+            echo "ERROR: index.css file is missing in dist/assets directory!!"
+            exit 1
+          fi
+          if ! ls dist/assets/*.js 1> /dev/null 2>&1; then
+            echo "ERROR: No JavaScript files found in dist/assets directory!!"
+            exit 1
+          fi
+          if ! ls dist/assets/*.css 1> /dev/null 2>&1; then
+            echo "ERROR: No CSS files found in dist/assets directory!!"
+            exit 1
+          fi
+          echo "Complete dist directory list"
+          ls -R ./dist
   package:
     name: Package App
     needs: build
