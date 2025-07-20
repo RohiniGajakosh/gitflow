@@ -61,21 +61,24 @@ jobs:
       - name: Verify dist directory
         run: |
           echo "Verifying current working directory..."
-          ls -la 
-          echo "Verifying dist directory  contents"
-          ls -la ./dist/
+          pwd
+          echo "Verifying  directory  contents"
+          ls -la
           - name: Debug - Show directory contents
           run: | 
-            echo "Build directory contents:"
+            echo "Build dist directory contents:"
             ls -la ./dist/
-            echo "Checking index,html file if it exists...."
-            [ -f dist/index.html ]; || echo "ERROR: index.heml file is missing in dist directory!!"
+            echo "Checking index.html file if it exists...."
+            [ -f dist/index.html ] || echo "ERROR: index.heml file is missing in dist directory!!"
             - name: Verify build outputs
               run: |
-                ls -R ./dist
-                [ -fn dist/index.html ] || echo "ERROR: index.html file is missing in dist directory!!"
+                [ -f dist/assets/index.html ] || echo "ERROR: index.html file is missing in dist directory!!"   
                 [ -f dist/assets/index.js ] || echo "ERROR: index.js file is missing in dist/assets directory!!"
                 [ -f dist/assets/index.css ] || echo "ERROR: index.css file is missing in dist/assets directory!!"
+                [ -f dist/assets/*.js ] || echo "ERROR: No JavaScript files found in dist/assets directory!!"
+                [ -f dist/assets/*.css ] || echo "ERROR: No CSS files found in dist/assets directory!!"
+                echo "Complete dist directory list"
+                ls -R ./dist
   package:
     name: Package App
     needs: build
