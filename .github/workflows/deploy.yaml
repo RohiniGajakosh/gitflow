@@ -1,4 +1,5 @@
 ##https://docs.github.com/en/actions/concepts/workflows-and-actions/contexts
+##https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#using-a-specific-shell%5C
 name: deploy Pipeline
 on:
   ##push:
@@ -63,7 +64,18 @@ jobs:
           ls -la 
           echo "Verifying dist directory  contents"
           ls -la ./dist/
-
+          - name: Debug - Show directory contents
+          run: | 
+            echo "Build directory contents:"
+            ls -la ./dist/
+            echo "Checking index,html file if it exists...."
+            [ -f dist/index.html ]; || echo "ERROR: index.heml file is missing in dist directory!!"
+            - name: Verify build outputs
+              run: |
+                ls -R ./dist
+                [ -fn dist/index.html ] || echo "ERROR: index.html file is missing in dist directory!!"
+                [ -f dist/assets/index.js ] || echo "ERROR: index.js file is missing in dist/assets directory!!"
+                [ -f dist/assets/index.css ] || echo "ERROR: index.css file is missing in dist/assets directory!!"
   package:
     name: Package App
     needs: build
