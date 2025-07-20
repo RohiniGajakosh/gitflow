@@ -3,10 +3,7 @@ on:
   workflow_run:
     workflows: [ValidatePipeline]
     types: [completed]
-  push:
-    branches:
-      - master ## only pushes to master branch will trigger this workflow
-      - main
+
 jobs:
   test:
     runs-on: ubuntu-latest

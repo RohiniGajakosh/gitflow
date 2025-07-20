@@ -1,5 +1,4 @@
 name: ValidatePipeline
-
 on:
   push:
     branches:
