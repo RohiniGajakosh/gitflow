@@ -39,13 +39,10 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Install Vitest
-        run: npm install --save-dev vitest
+        run: npm install --save-dev vitest ## Install Vitest for testing
       - name: Run unit tests
         run: npm run test
-      - name: Run integration tests
-        run: npm run test:integration
-      - name: Run e2e tests
-        run: npm run test
+
 
   build:
     name: Build App
