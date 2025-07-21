@@ -128,7 +128,7 @@ jobs:
           path: |
             ./dist 
             ./dist/assets/  
-            !assets/**/* 
+            !assets/**/*
 
   deploy-staging:
     name: Deploy to Staging
@@ -191,7 +191,7 @@ jobs:
     needs: approval
     runs-on: ubuntu-latest
     steps:
-      - name: Use output
+      - name: Use output   ## Use the output from the build job
         run: echo "The actual script file is ${{ needs.build.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
