@@ -4,6 +4,7 @@ on:
     branches:
       - master ### only pushes to master branch will trigger this workflow
       - main
+      - raj
 
 jobs:
   checkout:

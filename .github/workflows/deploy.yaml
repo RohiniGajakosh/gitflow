@@ -3,6 +3,7 @@
 ##Artifacts are temporary (default: 90 days storage).
 ##Path consistency matters: If you upload dist/, it downloads to ./dist/.
 ##Output variables (script-file) are for small metadata (not large files).
+##https://docs.github.com/en/actions/reference/contexts-reference
 name: deploy Pipeline
 on:
   ##push:
@@ -55,12 +56,19 @@ jobs:
     name: Build App
     needs: test
     runs-on: ubuntu-latest
-    steps:
+    outputs:
+      scriptfile: ${{ steps.publish.outputs.scriptfile }} #### Define an output variable to be used in the deploy job, ##https://docs.github.com/en/actions/reference/contexts-reference  ##jobs.<job_id>.outputs.<output_id>
+    steps: ##jobs.<job_id>.outputs.<output_id>
       - uses: actions/checkout@v3
       - name: Install Vitest
         run: npm install --save-dev vitest ## install Vitest for testing, if not already installed
       - name: Build Project
         run: npm run build
+      - name: Find main js file
+        id: publish
+        run: |
+          file=$(find dist/assets -type f -name "*.js" | head -n 1) 
+          echo "scriptfile=$file" >> $GITHUB_OUTPUT
 
   package:
     name: Package App
@@ -118,9 +126,9 @@ jobs:
         with: ##specify the artifact name and path to upload
           name: build-artifacts ## name for retriving the artifacts, can also use multiple names
           path: |
-            ./dist ## path to download the artifacts to
-            ./dist/assets/  ## include and save the files here
-            !assets/**/* ## Exclude any template files   ######
+            ./dist 
+            ./dist/assets/  
+            !assets/**/* 
 
   deploy-staging:
     name: Deploy to Staging
@@ -183,4 +191,7 @@ jobs:
     needs: approval
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deploying to production..."
+      - name: Use output
+        run: echo "The actual script file is ${{ needs.build.outputs.scriptfile }}"
+      - name: Deploy to production
+        run: echo "Deploying to production..."
