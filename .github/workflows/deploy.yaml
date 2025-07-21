@@ -117,7 +117,8 @@ jobs:
       - uses: actions/upload-artifact@v4 ## Upload the build artifacts
         with: ##specify the artifact name and path to upload
           name: build-artifacts ## name for retriving the artifacts, can also use multiple names
-          path: ./dist
+          path: ./dist  ## path to upload the artifacts from
+
 
   deploy-staging:
     name: Deploy to Staging
