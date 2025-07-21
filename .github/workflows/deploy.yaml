@@ -130,6 +130,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts ## name for retriving the artifacts, can also use multiple names
+          path: ./dist ## path to download the artifacts to
       - name: Verify downloaded artifacts
         run: |
           echo "Verifying current working directory..."
