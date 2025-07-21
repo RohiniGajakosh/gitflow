@@ -117,7 +117,10 @@ jobs:
       - uses: actions/upload-artifact@v4 ## Upload the build artifacts
         with: ##specify the artifact name and path to upload
           name: build-artifacts ## name for retriving the artifacts, can also use multiple names
-          path: ./dist
+          path: | 
+            ./dist ## path to upload the artifacts from, can also use multiple paths
+            ./package.json ## include package.json if needed for deployment
+            !./assets/*/* ## exclude specific files or directories, if needed
 
   deploy-staging:
     name: Deploy to Staging
@@ -160,6 +163,8 @@ jobs:
           fi
           echo "Complete dist directory list"
           ls -R ./dist
+
+
       - name: Output file list
         run: ls -R ./dist ##verify the contents of the dist directory iirespective of the branch
 
