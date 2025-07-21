@@ -1,5 +1,8 @@
 ##https://docs.github.com/en/actions/concepts/workflows-and-actions/contexts
 ##https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#using-a-specific-shell%5C
+##Artifacts are temporary (default: 90 days storage).
+##Path consistency matters: If you upload dist/, it downloads to ./dist/.
+##Output variables (script-file) are for small metadata (not large files).
 name: deploy Pipeline
 on:
   ##push:
@@ -58,8 +61,30 @@ jobs:
         run: npm install --save-dev vitest ## install Vitest for testing, if not already installed
       - name: Build Project
         run: npm run build
+
+  package:
+    name: Package App
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Packaging build artifacts..."
+
+  upload-artifacts:
+    name: Upload Artifacts
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Vitest
+        run: npm install --save-dev vitest
+      - name: Build Project
+        run: npm run build
       - name: Verify dist directory
         run: |
+          echo "Verifying current working directory..."
+          ls -la 
+          echo "Verifying dist directory  contents"
+          ls -la ./dist/
           echo "Verifying current working directory..."
           pwd
           echo "Verifying directory contents"
@@ -89,32 +114,9 @@ jobs:
           fi
           echo "Complete dist directory list"
           ls -R ./dist
-  package:
-    name: Package App
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Packaging build artifacts..."
-
-  upload-artifacts:
-    name: Upload Artifacts
-    needs: package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Vitest
-        run: npm install --save-dev vitest
-      - name: Build Project
-        run: npm run build
-      - name: Verify dist directory
-        run: |
-          echo "Verifying current working directory..."
-          ls -la 
-          echo "Verifying dist directory  contents"
-          ls -la ./dist/
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
+      - uses: actions/upload-artifact@v4 ## Upload the build artifacts
+        with: ##specify the artifact name and path to upload
+          name: build-artifacts ## name for retriving the artifacts, can also use multiple names
           path: ./dist
 
   deploy-staging:
@@ -122,7 +124,43 @@ jobs:
     needs: upload-artifacts
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Deploying to staging..."
+      - name: Deploying to staging
+        run: echo "Deploying to staging..."
+      - name: Download upload-artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts ## name for retriving the artifacts, can also use multiple names
+      - name: Verify downloaded artifacts
+        run: |
+          echo "Verifying current working directory..."
+          pwd
+          echo "Verifying downloaded artifacts contents"
+          ls -la ./dist/
+          echo "Checking index.html file if it exists...."
+          if [ ! -f dist/index.html ]; then 
+            echo "Warning: index.html file is missing in dist directory!!"
+            exit 1
+          fi
+          if [ ! -f dist/index.html ]; then
+            echo "ERROR: index.html file is missing in dist/assets directory!!"
+            exit 1
+          fi
+          if [ ! -f dist/assets/*.png ]; then
+            echo "ERROR: image file is missing in dist/assets directory!!"
+            exit 1
+          fi
+          if ! ls dist/assets/*.js 1> /dev/null 2>&1; then
+            echo "ERROR: No JavaScript files found in dist/assets directory!!"
+            exit 1
+          fi
+          if ! ls dist/assets/*.css 1> /dev/null 2>&1; then
+            echo "ERROR: No CSS files found in dist/assets directory!!"
+            exit 1
+          fi
+          echo "Complete dist directory list"
+          ls -R ./dist
+      - name: Output file list
+        run: ls -R ./dist
 
   approval:
     name: Await Manual Approval
