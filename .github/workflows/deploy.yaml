@@ -161,7 +161,7 @@ jobs:
           echo "Complete dist directory list"
           ls -R ./dist
       - name: Output file list
-        run: ls -R ./dist
+        run: ls -R ./dist ##verify the contents of the dist directory
 
   approval:
     name: Await Manual Approval
