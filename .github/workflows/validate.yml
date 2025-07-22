@@ -2,9 +2,10 @@ name: ValidatePipeline
 on:
   push:
     branches:
-      - master 
+      - master
       - main
       - raj
+      - rohini
 
 jobs:
   checkout:
@@ -60,8 +61,6 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-
-
 
   deploy:
     name: Deploy Application
