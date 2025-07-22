@@ -38,6 +38,7 @@ jobs:
         uses: actions/cache@v3   ##To get list of all the actions https://github.com/actions/cache
         with:
           path: ~/.npm 
+          key: depend-node-modules-${{hashFiles('**/package-lock.json')}}
       - name: Install dependencies
         run: npm ci
       - name: Test code

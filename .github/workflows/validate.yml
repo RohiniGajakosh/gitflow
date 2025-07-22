@@ -25,9 +25,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3
         with:
-          path: ~/.npm 
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node- 
       - name: Install dependencies
         run: npm ci
 
@@ -55,9 +58,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3
         with:
-          path: ~/.npm 
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm ci
       - name: Build code
@@ -82,9 +88,12 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3
         with:
-          path: ~/.npm 
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install dependencies
         run: npm ci
       - name: Deploy project
