@@ -64,7 +64,7 @@ jobs:
         run: npm install --save-dev vitest ## install Vitest for testing, if not already installed
       - name: Build Project
         run: npm run build
-      - name: Find main js file
+      - name: Find scriptfile
         id: publish
         run: |
           file=$(find dist/assets -type f -name "*.js" | head -n 1) 
@@ -188,10 +188,12 @@ jobs:
 
   deploy-prod:
     name: Deploy to Production
-    needs: approval
+    needs: 
+       - approval  
+       - build
     runs-on: ubuntu-latest
     steps:
-      - name: Use output   ## Use the output from the build job
+      - name: Use output ## Use the output from the build job
         run: echo "The actual script file is ${{ needs.build.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
