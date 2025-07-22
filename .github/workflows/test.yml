@@ -35,7 +35,7 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3   ##To get list of all the actions https://github.com/actions/cache
         with:
           path: ~/.npm 
       - name: Install dependencies
@@ -46,3 +46,6 @@ jobs:
         run: npm run build
       - name: Deploy project
         run: echo "Deploying..." ### This step simulates deployment
+
+
+##commands 

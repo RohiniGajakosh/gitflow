@@ -221,3 +221,7 @@ jobs:
         run: echo "The actual script file is ${{ needs.build.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
+
+
+###  npm outdated
+## npm update
