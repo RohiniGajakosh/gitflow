@@ -3,6 +3,8 @@
 ##Artifacts are temporary (default: 90 days storage).
 ##Path consistency matters: If you upload dist/, it downloads to ./dist/.
 ##Output variables (script-file) are for small metadata (not large files).
+##Output jobs can be created and refrence only if declared at top also, here as we will get random file names in dist/assets directory, we will use the output variable to get the script file name
+##https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobs
 ##https://docs.github.com/en/actions/reference/contexts-reference
 name: deploy Pipeline
 on:
@@ -74,8 +76,19 @@ jobs:
     name: Package App
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      jshide: ${{ steps.call.outputs.dante }} 
     steps:
       - run: echo "Packaging build artifacts..."
+      - uses: actions/checkout@v3
+      - name: Install Vitest
+        run: npm install --save-dev vitest ## Install Vitest for testing  
+      - name: Build Project  
+        run: npm run build ## Build the project
+      - name: catchjs
+        id: call
+        run: find dist/assets/*.js -type f -execdir echo 'dante={}'>> $GITHUB_OUTPUT ';'
+
 
   upload-artifacts:
     name: Upload Artifacts
@@ -185,6 +198,8 @@ jobs:
     steps:
       - name: Wait for approval
         run: echo "Waiting for manual approval..."
+      - name: Output Filename
+        run: echo "The script file is ${{ needs.call.outputs.dante }}" ## calls dante
 
   deploy-prod:
     name: Deploy to Production
