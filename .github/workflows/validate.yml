@@ -2,7 +2,7 @@ name: ValidatePipeline
 on:
   push:
     branches:
-      - master ### only pushes to master branch will trigger this workflow
+      - master 
       - main
       - raj
 
@@ -49,6 +49,19 @@ jobs:
         run: npm ci
       - name: Build code
         run: npm run build
+      - name: List scripts
+        run: cat package.json | jq .scripts || cat package.json
+      - name: Show installed binaries
+        run: ls -l node_modules/.bin
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+
 
   deploy:
     name: Deploy Application
