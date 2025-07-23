@@ -39,7 +39,8 @@ jobs:
         id: run-tests
         run: npm run test
       - name: Upload test report
-        if: steps.run-tests.outcome == 'failure' ## This step is condition for next step only runs if this step fails   ###https://docs.github.com/en/actions/reference/contexts-reference all the refrence contexts and syntax can be found here
+        if: failure() && steps.run-tests.outcome == 'failure' ## This step is condition for next step only runs if this step fails   ###https://docs.github.com/en/actions/reference/contexts-reference all the refrence contexts and syntax can be found here
+        ##faliure() always returns true if any job or functions fails, or previous step fails, sucess() reuts true when none of the previous step fails, always() returns true no matter what the previous step returns, cancelled() retuns true when the workflow is cancelled, success() returns true when the previous step is successful
         uses: actions/upload-artifact@v4
         with:
           name: test-report
