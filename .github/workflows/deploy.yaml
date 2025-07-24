@@ -96,7 +96,9 @@ jobs:
         run: npm run build ## Build the project
       - name: catchjs
         id: call
-        run: find dist/assets/*.js -type f -execdir echo 'dante={}'>> $GITHUB_OUTPUT ';'
+        run: find dist/assets/*.js -type f -execdir echo 'dante={}'>> $GITHUB_OUTPUT ';' ## 
+
+    
 
 
   upload-artifacts:
@@ -144,6 +146,9 @@ jobs:
           fi
           echo "Complete dist directory list"
           ls -R ./dist
+      - name: Output file list
+        run: echo "Listing all files in the dist directory {{needs.pakage.outputs.jshide}}"
+      ## {{needs.<job-name>.outputs.<output-name of the job>}} is used to access the output of a job in another job, here we are accessing the output of the package job in the upload-artifacts jo
       - uses: actions/upload-artifact@v4 ## Upload the build artifacts
         with: ##specify the artifact name and path to upload
           name: build-artifacts ## name for retriving the artifacts, can also use multiple names
@@ -199,7 +204,9 @@ jobs:
 
   approval:
     name: Await Manual Approval
-    needs: deploy-staging
+    needs: 
+      - deploy-staging
+      - build
     runs-on: ubuntu-latest
     environment:
       name: production
@@ -214,11 +221,11 @@ jobs:
     name: Deploy to Production
     needs: 
        - approval  
-       - build
+       - build  ### This is to ensure that the build job is completed before deploying to production and also to use the output from the build job in the deploy job
     runs-on: ubuntu-latest
     steps:
       - name: Use output ## Use the output from the build job
-        run: echo "The actual script file is ${{ needs.nano.outputs.scriptfile }}"
+        run: echo "The actual script file is ${{ needs.publish.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
 
