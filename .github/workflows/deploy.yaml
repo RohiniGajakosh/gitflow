@@ -218,7 +218,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Use output ## Use the output from the build job
-        run: echo "The actual script file is ${{ needs.build.outputs.scriptfile }}"
+        run: echo "The actual script file is ${{ needs.nano.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
 
