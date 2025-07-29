@@ -1,81 +1,34 @@
 name: cache
 on: push
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Output event data
-        run: echo "${{ toJSON(github.event) }}"
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20 # Specify the Node.js version you want to use
-      - name: Install and build dependencies
-        run: |
-          npm ci
-      - name: Simulate extended runtime
-        run: npm run build
-      - name: Deploy project
-        run: echo "Deploying..."
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output events data ## This step outputs the event data
-        run: echo "${{ toJSON(github.event) }}"
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20 # Specify the Node.js version you want to use
+      - uses: actions/checkout@v3
+      # Add caching
+      - run: npm ci
+      - run: npm run build
+
   clear:
     runs-on: ubuntu-latest
+    needs: test
     permissions:
       actions: write
     steps:
-      - name: Install GitHub CLI
-        uses: cli/gh-action
+      - uses: cli/gh-action@v2
+
       - name: Delete branch-specific caches
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_PAT_TOKEN }}
         run: |
           gh cache list \
             --repo "${{ github.repository }}" \
             --ref "refs/heads/${{ github.ref_name }}" \
             --limit 100 \
             --json id --jq '.[].id' \
-          | while read cacheId; do
-              echo "Deleting cache ID $cacheId"
-              gh cache delete "$cacheId" \
+          | while read id; do
+              gh cache delete "$id" \
                 --repo "${{ github.repository }}" \
                 --confirm
             done
-      - name: Install dependencies
-        run: npm ci
-      - name: Test code
-        run: npm run test
-      - name: Build code
-        run: npm run build
-      - name: Deploy project
-        run: echo "Deploying..."
-  redeploy:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output events data ## This step outputs the event data
-        run: echo "${{ toJSON(github.event) }}"
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: npm ci
-      - name: Test code
-        run: npm run test
-      - name: Build code
-        run: npm run build
-      - name: Deploy project
-        run: echo "Deploying..." ### This step simulates deployment
-
-##commands
