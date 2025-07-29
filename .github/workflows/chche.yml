@@ -1,4 +1,4 @@
-name: Test
+name: cache
 on: push
 jobs:
   test:
