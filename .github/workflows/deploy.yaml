@@ -7,12 +7,12 @@
 ##https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobs
 ##https://docs.github.com/en/actions/reference/contexts-reference
 name: deploy Pipeline
-on:
+on:  workflow_dispatch
   ##push:
   ##  branches:
   ##    - master
   ##    - main
-  workflow_run:
+  #workflow_run:
     #workflows: [Test]
     #types: ["completed"]
 jobs:
