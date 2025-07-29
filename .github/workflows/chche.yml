@@ -17,16 +17,14 @@ jobs:
       actions: write
     steps:
       - uses: sersoft-gmbh/setup-gh-cli-action@v2
-      - name: Delete branch-specific caches
+      - name: Delete branch‑specific caches
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}  # Must have repo scope
         run: |
           gh cache list \
-              --repo "RohiniGajakosh/gitflow" \
-              --ref "refs/heads/rohini" \
-              --limit 100 \
-              --json id --jq '.[].id' \
-              | while read cacheId; do
-                echo "Deleting cache ID $cacheId"
-                gh cache delete "$cacheId" --repo "RohiniGajakosh/gitflow" --confirm
-              done
+            --repo "${{ github.repository }}" \
+            --ref "refs/heads/${{ github.ref_name }}" \
+            --limit 100 --json id --jq '.[].id' \
+          | while read cacheId; do
+              gh cache delete "$cacheId" --repo "${{ github.repository }}"
+            done
