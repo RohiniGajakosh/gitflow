@@ -40,8 +40,8 @@ jobs:
       - name: Deploy project
         run: echo "Deploying..."
 
-  deploy:
-    needs: test
+  redeploy:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Output events data ## This step outputs the event data
