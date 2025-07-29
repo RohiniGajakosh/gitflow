@@ -32,10 +32,11 @@ jobs:
         with:
           node-version: 20 # Specify the Node.js version you want to use
       - run: |
-          cacheIds=$(gh cache list --repo ${{ github.repository }} --branch ${{ github.ref }} --limit 100 --json id --jq '.[].id')
-          for id in $cacheIds; do
-            gh cache delete $id --repo ${{ github.repository }} --confirm
-          done
+          gh cache list --repo "${{ github.repository }}" --ref "${{ github.ref }}" --limit 100 --json id --jq '.[].id' \
+            | while read cacheId; do
+                echo "Deleting cache ID $cacheId"
+                gh cache delete "$cacheId" --repo "${{ github.repository }}" --confirm
+              done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install dependencies
