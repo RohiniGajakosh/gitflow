@@ -31,23 +31,29 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20 # Specify the Node.js version you want to use
-      - name: Delete caches
+     
+  clear:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Install GitHub CLI
+        uses: cli/gh-action
+      - name: Delete branch-specific caches
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Ensure you have a GitHub token with appropriate permissions
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh cache delete --all \
-           --repo "${{ github.repository }}" \
-           --ref "${{ github.ref }}" \
-           --succeed-on-no-caches
-      - name: new_delete
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Ensure you have a GitHub token with appropriate permissions
-        run: |
-          gh cache list --repo "${{ github.repository }}" --ref "${{ github.ref }}" --limit 100 --json id --jq '.[].id' \
-            | while read cacheId; do
-                echo "Deleting cache ID $cacheId"
-                gh cache delete "$cacheId" --repo "${{ github.repository }}" --succeed-on-no-caches --all 
-              done
+          gh cache list \
+            --repo "${{ github.repository }}" \
+            --ref "refs/heads/${{ github.ref_name }}" \
+            --limit 100 \
+            --json id --jq '.[].id' \
+          | while read cacheId; do
+              echo "Deleting cache ID $cacheId"
+              gh cache delete "$cacheId" \
+                --repo "${{ github.repository }}" \
+                --confirm
+            done
       - name: Install dependencies
         run: npm ci
       - name: Test code
