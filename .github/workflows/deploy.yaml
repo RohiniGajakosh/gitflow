@@ -13,8 +13,8 @@ on:
   ##    - master
   ##    - main
   workflow_run:
-    workflows: [Test]
-    types: ["completed"]
+    #workflows: [Test]
+    #types: ["completed"]
 jobs:
   checkout:
     name: Checkout code
@@ -41,10 +41,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3 ##T get list of all the actions https://github.com/actions/cache
         with:
-          path: ~/.npm  ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
-          key: depend-node-modules-${{hashFiles('**/package-lock.json')}}  ### This is the key for the cache, it is based on the hash of the package-lock.json file, if the file changes, the cache is discarded and a new cache is created
+          path: ~/.npm ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
+          key: depend-node-modules-${{hashFiles('**/package-lock.json')}} ### This is the key for the cache, it is based on the hash of the package-lock.json file, if the file changes, the cache is discarded and a new cache is created
           ###key also, suggest if the ache should be discarded or not, if the key changes, the cache is discarded and a new cache is createdhence give the name of cache that dinamic and can change as cache is discarded if the key changes
           ## hash files is used to create a unique key for the cache, if the package-lock.json file changes, the cache is discarded and a new cache is created and we are not using the old cache stored in the ~/.npm directory
       - name: Install dependencies
@@ -86,20 +86,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     outputs:
-      jshide: ${{ steps.call.outputs.dante }} 
+      jshide: ${{ steps.call.outputs.dante }}
     steps:
       - run: echo "Packaging build artifacts..."
       - uses: actions/checkout@v3
       - name: Install Vitest
-        run: npm install --save-dev vitest ## Install Vitest for testing  
-      - name: Build Project  
+        run: npm install --save-dev vitest ## Install Vitest for testing
+      - name: Build Project
         run: npm run build ## Build the project
       - name: catchjs
         id: call
-        run: find dist/assets/*.js -type f -execdir echo 'dante={}'>> $GITHUB_OUTPUT ';' ## 
-
-    
-
+        run: find dist/assets/*.js -type f -execdir echo 'dante={}'>> $GITHUB_OUTPUT ';' ##
 
   upload-artifacts:
     name: Upload Artifacts
@@ -204,7 +201,7 @@ jobs:
 
   approval:
     name: Await Manual Approval
-    needs: 
+    needs:
       - deploy-staging
       - build
     runs-on: ubuntu-latest
@@ -219,16 +216,14 @@ jobs:
 
   deploy-prod:
     name: Deploy to Production
-    needs: 
-       - approval  
-       - build  ### This is to ensure that the build job is completed before deploying to production and also to use the output from the build job in the deploy job
+    needs:
+      - approval
+      - build ### This is to ensure that the build job is completed before deploying to production and also to use the output from the build job in the deploy job
     runs-on: ubuntu-latest
     steps:
       - name: Use output ## Use the output from the build job
         run: echo "The actual script file is ${{ needs.publish.outputs.scriptfile }}"
       - name: Deploy to production
         run: echo "Deploying to production..."
-
-
 ###  npm outdated
 ## npm update

@@ -30,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Specify the Node.js version you want to use  
+          node-version: 20 # Specify the Node.js version you want to use
       - run: |
           cacheIds=$(gh cache list --repo ${{ github.repository }} --branch ${{ github.ref }} --limit 100 --json id --jq '.[].id')
           for id in $cacheIds; do

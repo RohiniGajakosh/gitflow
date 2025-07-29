@@ -1,12 +1,13 @@
 ##https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability
 name: Website Deployment
 on:
-  push:
-    branches:
-      - main
-      - master
-      - raj
-      - rohini
+  workflow_dispatch
+  # push:
+  # branches:
+  #   - main
+  #   - master
+  #   - raj
+  #   - rohini
 jobs:
   lint:
     runs-on: ubuntu-latest

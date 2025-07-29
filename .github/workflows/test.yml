@@ -1,8 +1,9 @@
 name: Test
 on:
-  workflow_run:
-    workflows: [ValidatePipeline]
-    types: [completed]
+  workflow_dispatch
+  #workflow_run:
+  #workflows: [ValidatePipeline]
+  #types: [completed]
 
 jobs:
   test:
@@ -13,10 +14,10 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##T get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3 ##T get list of all the actions https://github.com/actions/cache
         with:
-          path: ~/.npm  ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
-          key: depend-node-modules-${{hashFiles('**/package-lock.json')}} 
+          path: ~/.npm ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
+          key: depend-node-modules-${{hashFiles('**/package-lock.json')}}
       - name: Install dependencies
         run: npm ci
       - name: Test code
@@ -35,9 +36,9 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
-        uses: actions/cache@v3   ##To get list of all the actions https://github.com/actions/cache
+        uses: actions/cache@v3 ##To get list of all the actions https://github.com/actions/cache
         with:
-          path: ~/.npm 
+          path: ~/.npm
           key: depend-node-modules-${{hashFiles('**/package-lock.json')}}
       - name: Install dependencies
         run: npm ci
@@ -48,5 +49,4 @@ jobs:
       - name: Deploy project
         run: echo "Deploying..." ### This step simulates deployment
 
-
-##commands 
+##commands
