@@ -31,7 +31,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20 # Specify the Node.js version you want to use
-     
   clear:
     runs-on: ubuntu-latest
     permissions:
@@ -62,7 +61,6 @@ jobs:
         run: npm run build
       - name: Deploy project
         run: echo "Deploying..."
-
   redeploy:
     needs: deploy
     runs-on: ubuntu-latest
