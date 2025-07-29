@@ -20,15 +20,15 @@ jobs:
 
       - name: Delete branch-specific caches
         env:
-          GH_TOKEN: ${{ secrets.MY_PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh cache list \
             --repo "${{ github.repository }}" \
             --ref "refs/heads/${{ github.ref_name }}" \
-            --limit 100 \
-            --json id --jq '.[].id' \
-          | while read id; do
-              gh cache delete "$id" \
+            --limit 100 --json id --jq '.[].id' \
+          | while read cacheId; do
+              echo "Deleting cache $cacheId"
+              gh cache delete "$cacheId" \
                 --repo "${{ github.repository }}" \
                 --confirm
             done
