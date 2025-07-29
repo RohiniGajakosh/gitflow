@@ -21,10 +21,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh cache list --repo "${{ github.repository }}" \
-            --ref "refs/heads/${{ github.ref_name }}" \
-            --limit 100 --json id --jq '.[].id' \
+          gh cache list --repo "${{ github.repository }}" --ref "refs/heads/${{ github.ref_name }} --limit 100 --json id --jq '.[].id' \
           | while read cacheId; do
               echo "Deleting cache ID $cacheId"
-              gh cache delete "$cacheId" --repo "${{ github.repository }}" --all
+              gh cache delete "$cacheId" --repo "${{ github.repository }}" --confirm
             done
