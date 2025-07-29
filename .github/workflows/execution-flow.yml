@@ -1,3 +1,4 @@
+##https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability
 name: Website Deployment
 on:
   push:
@@ -79,3 +80,14 @@ jobs:
         run: ls
       - name: Deploy
         run: echo "Deploying..."
+  report:
+    if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output infroamtion
+        run: |
+          echo "Linting completed successfully."
+          echo "Testing completed successfully."
+          echo "Build completed successfully."
+          echo "Deployment completed successfully."
+          echo "${{github}}"
