@@ -16,6 +16,10 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Simulate extended runtime
+        run: |
+          npm run build
+          npm run long-process  
       - name: Install dependencies
         run: npm ci
       - name: Test code
