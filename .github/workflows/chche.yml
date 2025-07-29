@@ -26,5 +26,5 @@ jobs:
             --limit 100 --json id --jq '.[].id' \
           | while read cacheId; do
               echo "Deleting cache ID $cacheId"
-              gh cache delete "$cacheId" --repo "${{ github.repository }}" --confirm
+              gh cache delete "$cacheId" --repo "${{ github.repository }}" --all
             done
