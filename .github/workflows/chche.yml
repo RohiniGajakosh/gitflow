@@ -15,10 +15,8 @@ jobs:
       - name: Install and build dependencies
         run: |
           npm ci
-          npm run build
       - name: Simulate extended runtime
-        run: |
-          npm run Build
+        run: npm run build
       - name: Long task to extend duration
         run: |
           time npm run long-task
