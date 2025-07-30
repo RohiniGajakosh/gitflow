@@ -10,7 +10,7 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - run: npm install
-      - run: npm build # Add caching
+      - run: npm run build # Add caching
 
   clear:
     runs-on: ubuntu-latest
