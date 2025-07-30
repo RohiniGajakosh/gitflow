@@ -36,6 +36,7 @@ jobs:
     name: Install Dependencies
     needs: checkout
     runs-on: ubuntu-latest
+    if: steps.cache.outputs.cache-hit != 'true'
     steps:
       - uses: actions/checkout@v3
       - name: Cache dependencies
