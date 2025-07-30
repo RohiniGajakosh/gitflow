@@ -36,7 +36,6 @@ jobs:
     name: Install Dependencies
     needs: checkout
     runs-on: ubuntu-latest
-    if: steps.cache.outputs.cache-hit != 'true'
     steps:
       - uses: actions/checkout@v3
       - name: Cache dependencies
@@ -48,6 +47,19 @@ jobs:
           ## hash files is used to create a unique key for the cache, if the package-lock.json file changes, the cache is discarded and a new cache is created and we are not using the old cache stored in the ~/.npm directory
       - name: Install dependencies
         run: npm ci
+  chcekin:
+   name: Run Tests
+   needs: install
+   runs-on: ubuntu-latest
+   steps:
+     - uses: actions/checkout@v3
+     - name: Install dependencies
+       if: steps.cache.outputs.cache-hit != 'true'
+       run: npm install
+     - name: Install Vitest
+       run: npm install --save-dev vitest ## Install Vitest for testing
+     - name: Run unit tests
+       run: npm run test
 
   clear:
     runs-on: ubuntu-latest
