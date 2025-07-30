@@ -7,11 +7,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Get code
-      uses: actions/checkout@v3
-    - run: npm ci 
-    - run: npm build  # Add caching
- 
+      - name: Get code
+        uses: actions/checkout@v3
+      - run: npm install
+      - run: npm build # Add caching
 
   clear:
     runs-on: ubuntu-latest
@@ -22,7 +21,7 @@ jobs:
       - uses: sersoft-gmbh/setup-gh-cli-action@v2
       - name: Delete branch‑specific caches
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}  # Must have repo scope
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }} # Must have repo scope
         run: |
           gh cache list \
             --repo "${{ github.repository }}" \
