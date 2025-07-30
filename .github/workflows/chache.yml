@@ -12,10 +12,10 @@ jobs:
       # Add caching
       - name: Cache dependencies
         id: cache
-        uses: action/cache@v4
+        uses: action/cache@v3
         with:
-           path: node_modules
-           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         ## format for chceking and calling cache: steps.<step_id>.outputs.<output_name>
@@ -33,7 +33,7 @@ jobs:
       - uses: sersoft-gmbh/setup-gh-cli-action@v2
       - name: Delete branch‑specific caches
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}  # Must have repo scope
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }} # Must have repo scope
         run: |
           gh cache list \
             --repo "${{ github.repository }}" \
