@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
   install:
     name: Install Dependencies
-    needs: setup
+    needs: checkout
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -46,7 +46,6 @@ jobs:
           ## hash files is used to create a unique key for the cache, if the package-lock.json file changes, the cache is discarded and a new cache is created and we are not using the old cache stored in the ~/.npm directory
       - name: Install dependencies
         run: npm ci
-    
 
   clear:
     runs-on: ubuntu-latest
