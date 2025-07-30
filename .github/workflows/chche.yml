@@ -1,3 +1,4 @@
+##https://github.com/actions/cache
 name: cache
 on: push
 
@@ -5,9 +6,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Get code
+        uses: actions/checkout@v3
       # Add caching
-      - run: npm ci
+      - name: Cache dependencies
+        id: cache
+        uses: action/cache@v4
+        with:
+           path: node_modules
+           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        ## format for chceking and calling cache: steps.<step_id>.outputs.<output_name>
+        run: npm ci
+      - name: Test code
+        run: npm run test
       - run: npm run build
 
   clear:
