@@ -42,6 +42,13 @@ jobs:
         run: npm run test
       - name: Build project
         run: npm run build  --loglevel verbose
+      - name: Save node_modules cache (if not hit)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
   checkout:
     name: Checkout code
     needs: test
