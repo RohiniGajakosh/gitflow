@@ -21,14 +21,20 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
-   
 
       - name: Show cache status
-        run: echo "Cache hit ${{ steps.node-modules-cache.outputs.cache-hit }}"
+        run: echo "Cache hit ${{ steps.node_modules-cache.outputs.cache-hit }}"
 
       - name: Install dependencies
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        if: steps.node_modules-cache.outputs.cache-hit != 'true'
         run: npm ci
+
+      # ✅ FIX 1: Restore execute permission to esbuild binary if it exists
+      - name: Fix esbuild permissions (after cache restore)
+        run: |
+          if [ -f node_modules/esbuild/bin/esbuild ]; then
+            chmod +x node_modules/esbuild/bin/esbuild
+          fi
 
       - name: Run tests
         run: npm run test
@@ -36,8 +42,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      # ✅ FIX 2: Upload node_modules only if cache miss (to share with other jobs)
       - name: Save node_modules as artifact
-        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        if: steps.node_modules-cache.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: node_modules
@@ -52,12 +59,21 @@ jobs:
         with:
           node-version: '20.19.0'
 
+      # ✅ FIX 3: Restore previously uploaded node_modules
       - name: Download node_modules artifact
         uses: actions/download-artifact@v4
         with:
           name: node_modules
           path: node_modules/
-      - name: Run additional tests
+
+      # ✅ FIX 4: Fix permission again after artifact restore
+      - name: Fix esbuild permissions (after artifact restore)
+        run: |
+          if [ -f node_modules/esbuild/bin/esbuild ]; then
+            chmod +x node_modules/esbuild/bin/esbuild
+          fi
+
+      - name: Install Vitest and run additional tests
         run: |
           npm install --save-dev vitest
           npm run test
@@ -81,15 +97,14 @@ jobs:
             --repo "${{ github.repository }}" \
             --ref "refs/heads/${{ github.ref_name }}" \
             --limit 100 --json id --jq '.[].id')
-          echo "Deleting caches with IDs: $CACHE_IDS"
 
           if [ -z "$CACHE_IDS" ]; then
-            echo "No caches found for branch: ${{ github.ref_name }}"
+            echo " No caches found for branch: ${{ github.ref_name }}"
           else
-            echo "Found cache Ids:"
+            echo " Found cache IDs:"
             echo "$CACHE_IDS"
             echo "$CACHE_IDS" | while read cacheId; do
-              echo "Deleting cache ID $cacheId"
+              echo " Deleting cache ID $cacheId"
               gh cache delete "$cacheId" --repo "${{ github.repository }}"
             done
           fi
@@ -101,5 +116,5 @@ jobs:
     steps:
       - name: Output debug info
         run: |
-          echo "something went wrong"
+          echo " Workflow failed"
           echo "${{ toJSON(github) }}"
