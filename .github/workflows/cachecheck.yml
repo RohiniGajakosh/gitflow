@@ -79,7 +79,7 @@ jobs:
             --repo "${{ github.repository }}" \
             --ref "refs/head/${{ github.ref_name }}" \
             --limit 100 --json id --jq '.[].id')
-          echo "Deleting caches with IDs: $CACHE_IDS")
+          echo "Deleting caches with IDs: $CACHE_IDS"
 
           if [ -z "$CACHE_IDS"]; then
             echo "No caches found for branch: ${{ github.ref_name }}"
