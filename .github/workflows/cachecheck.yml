@@ -72,7 +72,7 @@ jobs:
       ### https://github.com/sersoft-gmbh/setup-gh-cli-action
       - name: Delete branch‑specific caches
         env:
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }} # Must have repo scope
+           GH_TOKEN: ${{ github.token }}   # Must have repo scope
         run: |
           echo "Fetching cache IDs for branch: ${{ github.ref_name }}"
           CACHE_IDS=$(gh cache list \
