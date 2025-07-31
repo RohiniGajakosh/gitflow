@@ -21,8 +21,7 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
-      - name: Fix permissions
-        run: chmod -R +x node_modules/esbuild/bin/esbuild
+   
 
       - name: Show cache status
         run: echo "Cache hit ${{ steps.node-modules-cache.outputs.cache-hit }}"
@@ -58,8 +57,6 @@ jobs:
         with:
           name: node_modules
           path: node_modules/
-      - name: Fix permissions
-        run: chmod -R +x node_modules/esbuild/bin/esbuild
       - name: Run additional tests
         run: |
           npm install --save-dev vitest
