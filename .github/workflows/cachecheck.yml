@@ -11,6 +11,10 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       # Add caching
+      - name: npm install 
+        run: npm ci  --loglevel verbose
+      - name: Test code
+        run: npm run test
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
