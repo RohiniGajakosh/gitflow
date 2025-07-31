@@ -1,6 +1,7 @@
 ##https://github.com/actions/cache
 ###https://github.com/marketplace/actions/setup-github-cli
 ### https://github.com/sersoft-gmbh/setup-gh-cli-action
+##Retriggering to run a chcek on the cache_if the job will skipp or not
 name: kakeh
 on: push
 
@@ -116,7 +117,7 @@ jobs:
   #        fi
   report:
     runs-on: ubuntu-latest
-    needs: [install, chcekin, clear]
+    needs: [ install, chcekin ]
     if: failure()
     steps:
       - name: Output infroamtion
