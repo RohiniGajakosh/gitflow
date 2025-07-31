@@ -1,7 +1,7 @@
 ##https://github.com/actions/cache
 ###https://github.com/marketplace/actions/setup-github-cli
 ### https://github.com/sersoft-gmbh/setup-gh-cli-action
-name: kakeh
+name: Cache Workflow
 on: push
 
 jobs:
@@ -11,6 +11,19 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       # Add caching
+      - name: Restore Node Modules Cache
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Show Cache Status
+        run: |
+          echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
+      - name: Show Cache Status
+        run: |
+          echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
+
       - name: Cache dependencies
         id: cache
         uses: actions/cache@v3
@@ -18,11 +31,12 @@ jobs:
           path: node_modules
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        ## format for chceking and calling cache: steps.<step_id>.outputs.<output_name>
+        if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-node-modules.cache-hit != 'true'
         run: npm ci
+
       - name: Test code
         run: npm run test
+
       - run: npm run build
   checkout:
     name: Checkout code
@@ -47,6 +61,7 @@ jobs:
           ###key also, suggest if the ache should be discarded or not, if the key changes, the cache is discarded and a new cache is createdhence give the name of cache that dinamic and can change as cache is discarded if the key changes
           ## hash files is used to create a unique key for the cache, if the package-lock.json file changes, the cache is discarded and a new cache is created and we are not using the old cache stored in the ~/.npm directory
       - name: Install dependencies
+
         run: npm ci
   chcekin:
     name: Run Tests
