@@ -11,14 +11,15 @@ jobs:
     outputs:
       cache-hit: ${{ steps.cache-node-modules.outputs.cache-hit }}
     steps:
-      - name: Get code
+      - name: Checkout
         uses: actions/checkout@v3
-      # Add caching
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
-      - name: Cache Node.js modules
+          node-version: '18'
+
+      - name: Cache Node.js modules (restore)
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -26,28 +27,32 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
       - name: Show Cache Status
         run: |
           echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
-      #   # - name: Cache dependencies
-      #       id: cache
-      #       uses: actions/cache@v3
-      #       with:
-      #         path: node_modules
-      #         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci  --loglevel verbose
+        run: npm ci
+
       - name: Test code
         run: npm run test
+
       - name: Build project
-        run: npm run build  --loglevel verbose
-      - name: Save node_modules cache (if not hit)
+        run: npm run build
+
+      - name: Check node_modules exists before saving
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: ls -l node_modules
+
+      - name: Save updated node_modules cache
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         uses: actions/cache@v3
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ github.run_id }}
+
 
   checkout:
     name: Checkout code
