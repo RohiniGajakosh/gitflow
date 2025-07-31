@@ -43,7 +43,7 @@ jobs:
       #         path: node_modules
       #         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' || steps.cache-node-modules.cache-hit != 'true'
+        if: needs.test.outputs.cache-hit != 'true' || steps.cache-node-modules.cache-hit != 'true'
         run: npm ci  --loglevel verbose
 
       - name: Test code
@@ -84,13 +84,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: needs.test.outputs.cache-hit != 'true'
         run: npm install  --loglevel verbose
       - name: Install Vitest
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        if: needs.test.outputs.cache-hit != 'true'
         run: npm install --save-dev vitest ## Install Vitest for testing
       - name: Run unit tests
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        if: needs.test.outputs.cache-hit != 'true'
         run: npm run test  --loglevel verbose
 
   clear:
