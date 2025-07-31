@@ -79,3 +79,13 @@ jobs:
           | while read cacheId; do
               gh cache delete "$cacheId" --repo "${{ github.repository }}"
             done
+  report:
+    runs-on: ubuntu-latest
+    needs: [install , clear ]
+    if: failure()
+    steps:
+      - name: Output infroamtion
+        run: |
+         echo "something went wrong"
+         echo "${{toJSON(github)}}"
+      
