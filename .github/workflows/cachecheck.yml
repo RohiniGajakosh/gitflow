@@ -2,7 +2,7 @@
 ###https://github.com/marketplace/actions/setup-github-cli
 ### https://github.com/sersoft-gmbh/setup-gh-cli-action
 name: kakeh
-on: push
+on: workflow_dispatch
 
 jobs:
   test:
@@ -29,6 +29,8 @@ jobs:
       - name: Show Cache Status
         run: |
           echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
+          echo "GH_TOKEN is set: ${GH_TOKEN:+yes}"
+
 
       - name: Cache dependencies
         id: cache
@@ -39,6 +41,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-node-modules.cache-hit != 'true'
         run: npm ci
+        
 
       - name: Test code
         run: npm run test
