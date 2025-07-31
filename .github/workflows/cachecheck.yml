@@ -17,10 +17,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: npm install
-        run: npm ci  --loglevel verbose
-      - name: Test code
-        run: npm run test
       - name: Cache Node.js modules
         id: cache-node-modules
         uses: actions/cache@v3
@@ -32,10 +28,6 @@ jobs:
       - name: Show Cache Status
         run: |
           echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
-      - name: Show Cache Status
-        run: |
-          echo "Cache hit: ${{ steps.cache-node-modules.outputs.cache-hit }}"
-          echo "GH_TOKEN is set: ${GH_TOKEN:+yes}"
       #   # - name: Cache dependencies
       #       id: cache
       #       uses: actions/cache@v3
@@ -43,11 +35,12 @@ jobs:
       #         path: node_modules
       #         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        if: needs.test.outputs.cache-hit != 'true' || steps.cache-node-modules.cache-hit != 'true'
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci  --loglevel verbose
       - name: Test code
         run: npm run test
-      - run: npm run build  --loglevel verbose
+      - name: Build project 
+        run: npm run build  --loglevel verbose
   checkout:
     name: Checkout code
     needs: test
