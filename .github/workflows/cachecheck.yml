@@ -42,7 +42,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3 ##T get list of all the actions https://github.com/actions/cache
         with:
-          path: ~/.npm ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
+          path: node_modules ##This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
           key: depend-node-modules-${{hashFiles('**/package-lock.json')}} ### This is the key for the cache, it is based on the hash of the package-lock.json file, if the file changes, the cache is discarded and a new cache is created
           ###key also, suggest if the ache should be discarded or not, if the key changes, the cache is discarded and a new cache is createdhence give the name of cache that dinamic and can change as cache is discarded if the key changes
           ## hash files is used to create a unique key for the cache, if the package-lock.json file changes, the cache is discarded and a new cache is created and we are not using the old cache stored in the ~/.npm directory
@@ -81,7 +81,7 @@ jobs:
             --limit 100 --json id --jq '.[].id')
           echo "Deleting caches with IDs: $CACHE_IDS"
 
-          if [ -z "$CACHE_IDS"]; then
+          if [ -z "$CACHE_IDS" ]; then
             echo "No caches found for branch: ${{ github.ref_name }}"
           else
             echo "Found cache Ids:"
