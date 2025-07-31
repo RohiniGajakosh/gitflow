@@ -7,6 +7,8 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache-node-modules.outputs.cache-hit }}
     steps:
       - name: Get code
         uses: actions/checkout@v3
