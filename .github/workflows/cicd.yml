@@ -21,6 +21,9 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-modules-
+        ## This key is based on the OS and the hash of package-lock.json
+        ## It allows restoring the cache across different runs and OS types
+        ## If the cache is not found, it will create a new one with the same key
 
       - name: Show cache status
         run: echo "Cache hit ${{ steps.node_modules-cache.outputs.cache-hit }}"
@@ -81,7 +84,6 @@ jobs:
           fi
       - name: Show permission after chmod
         run: ls -l node_modules/esbuild/bin/esbuild || true
-
 
       - name: Install Vitest and run additional tests
         run: |
