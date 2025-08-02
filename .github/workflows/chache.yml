@@ -70,7 +70,7 @@ jobs:
       - uses: sersoft-gmbh/setup-gh-cli-action@v2
       - name: Delete branch‑specific caches
         env:
-         GH_TOKEN: ${{ secrets.PAT_TOKEN }} 
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           gh cache list \
             --repo "${{ github.repository }}" \
@@ -82,7 +82,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     needs: [install, clear]
-    if: failure()
+    if: success()
     steps:
       - name: Output infroamtion
         run: |
