@@ -1,0 +1,28 @@
+name: Matrix Demo
+on: push
+jobs:
+  build:
+    strategy:
+      matrix:
+        node-version: [12, 14, 16, 18]
+        operating-system: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.operating-system }}
+    steps:
+      - name: Get Code
+        uses: actions/chcekout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            deps-node-modules-
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Tests
+        continue-on-error: true ## This step will continue even if it fails, useful for testing purposes
+        run: npm run test
