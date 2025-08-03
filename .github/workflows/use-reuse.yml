@@ -8,24 +8,28 @@ on:
   #   - raj
   #   - rohini
 jobs:
-  lint:
-    continue-on-error: true ## This step will continue even if it fails, useful for testing purposes at job level, makes the entire job continue even if one step fails
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get code
-        uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm ## This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, meaning the dependencies are not cached
-        run: npm ci
-      - name: Lint code
-        run: npm run lint
-  test:
+ lint:
+  continue-on-error: true
+  runs-on: ubuntu-latest
+  steps:
+    - name: Get code
+      uses: actions/checkout@v4
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: deps-node-modules-
+    - name: Install dependencies
+      run: npm ci
+    - name: Lint code
+      run: npm run lint
+    - name: Warn if lint fails
+      if: failure()
+      run: echo "::warning::Lint failed but continuing due to continue-on-error"
+
+ test:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -42,7 +46,7 @@ jobs:
         with:
           name: test-report
           path: test.json
-  build:
+ build:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -58,10 +62,10 @@ jobs:
         with:
           name: dist-files
           path: dist
-  deploy:
+ deploy:
     needs: build
     uses: ./.github/workflows/reusable.yaml ## This is the reusable workflow that will be called by this job
-  report:
+ report:
     needs: [lint, deploy]
     if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
     runs-on: ubuntu-latest
