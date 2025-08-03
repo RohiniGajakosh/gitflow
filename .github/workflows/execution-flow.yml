@@ -1,7 +1,7 @@
 ##https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability
 name: Website Deployment
 on:
- push:
+  push
   # branches:
   #   - main
   #   - master
@@ -20,6 +20,7 @@ jobs:
           path: ~/.npm ## This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, meaning the dependencies are not cached
         run: npm ci
       - name: Lint code
         run: npm run lint

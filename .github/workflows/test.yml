@@ -1,6 +1,6 @@
 name: Test
 on:
-  workflow_dispatch
+  push
   #workflow_run:
   #workflows: [ValidatePipeline]
   #types: [completed]
@@ -44,6 +44,7 @@ jobs:
         run: npm ci
       - name: Test code
         run: npm run test
+        if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, meaning the dependencies are not cached
       - name: Build code
         run: npm run build
       - name: Deploy project
