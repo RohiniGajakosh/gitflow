@@ -19,7 +19,6 @@ jobs:
         exclude:  ## This is used to exclude configurations from the matrix
           - node-version: 12 ## This is the Node.js version to exclude
             operating-system: windows-latest ## This is the operating system to exclude
-
     runs-on: ${{ matrix.operating-system }}
     steps:
       - name: Get Code

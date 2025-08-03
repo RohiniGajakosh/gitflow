@@ -1,0 +1,77 @@
+##https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability
+name: Using Reusable Workflow
+on:
+  push
+  # branches:
+  #   - main
+  #   - master
+  #   - raj
+  #   - rohini
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm ## This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, meaning the dependencies are not cached
+        run: npm ci
+      - name: Lint code
+        run: npm run lint
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Test code
+        id: run-tests
+        run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure' ## This step is condition for next step only runs if this step fails   ###https://docs.github.com/en/actions/reference/contexts-reference all the refrence contexts and syntax can be found here
+        ##faliure() always returns true if any job or functions fails, or previous step fails, sucess() reuts true when none of the previous step fails, always() returns true no matter what the previous step returns, cancelled() retuns true when the workflow is cancelled, success() returns true when the previous step is successful
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        id: build-website
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist
+  deploy:
+    needs: build
+    uses: ./.github/workflows/reusable.yaml ## This is the reusable workflow that will be called by this job
+    with:
+      name: dist-files
+      path: dist
+  report:
+    needs: [lint, deploy]
+    if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output infroamtion
+        run: |
+          echo "Linting completed successfully."
+          echo "Testing completed successfully."
+          echo "Build completed successfully."
+          echo "Deployment completed successfully."
+          echo "${{toJSON(github)}}"
