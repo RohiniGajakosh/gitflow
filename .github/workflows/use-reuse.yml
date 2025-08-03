@@ -60,9 +60,6 @@ jobs:
   deploy:
     needs: build
     uses: ./.github/workflows/reusable.yaml ## This is the reusable workflow that will be called by this job
-    with:
-      name: dist-files
-      path: dist
   report:
     needs: [lint, deploy]
     if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
