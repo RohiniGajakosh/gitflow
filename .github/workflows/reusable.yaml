@@ -7,4 +7,4 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
       - name: Output information
-        run:  echo "Deploying & uploading"
+        run: echo "Deploying & uploading"

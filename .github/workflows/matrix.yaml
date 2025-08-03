@@ -6,17 +6,17 @@ jobs:
     strategy: ## This is used to define a matrix of jobs, allowing the same job to run on multiple configurations
       fail-fast: false ## This option allows the matrix to continue running even if one of the jobs fails
       max-parallel: 6 ## This option allows to limit the number of jobs that can run in parallel
-      matrix:  ## This is used to define a matrix of jobs, allowing the same job to run on multiple configurations
+      matrix: ## This is used to define a matrix of jobs, allowing the same job to run on multiple configurations
         # Define the matrix for Node.js versions and operating systems
         node-version: [12, 14, 16, 18] ## This is the list of Node.js versions to test against
         # Define the matrix for operating systems
         operating-system: [ubuntu-latest, windows-latest]
-        include:  ## This is used to include additional configurations in the matrix
+        include: ## This is used to include additional configurations in the matrix
           - node-version: 18 ## This is the Node.js version to test against
-            operating-system: ubuntu-latest 
-          - node-version: 16   ## This is the Node.js version to test against
+            operating-system: ubuntu-latest
+          - node-version: 16 ## This is the Node.js version to test against
             operating-system: windows-latest
-        exclude:  ## This is used to exclude configurations from the matrix
+        exclude: ## This is used to exclude configurations from the matrix
           - node-version: 12 ## This is the Node.js version to exclude
             operating-system: windows-latest ## This is the operating system to exclude
     runs-on: ${{ matrix.operating-system }}
