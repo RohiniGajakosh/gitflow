@@ -65,6 +65,8 @@ jobs:
  deploy:
     needs: build
     uses: ./.github/workflows/reusable.yaml ## This is the reusable workflow that will be called by this job
+    with:
+      atifact-name: dist-files ## This is the name of the artifact to download, it should match the name of the artifact uploaded in the build job
  report:
     needs: [lint, deploy]
     if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
