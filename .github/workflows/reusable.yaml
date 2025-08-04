@@ -11,6 +11,13 @@ on:
          type: string ## This is the type of the input, can be string, boolean, number, array, object, etc.
          default: 'dist' ## This is the default value for the input, if not provided the workflow will use this value
           ## This is the name of the artifact to download, it should match the name of the
+     outputs: ## This is the outputs section, it defines the outputs that can be returned by the workflow when it is called
+       result:
+         description: 'Result_of_deployment_operation'
+         value: ${{ jobs.deploy.outputs.outcome }} ## This is the path to the downloaded artifact, it can be used in the next steps of the workflow or in the calling workflow
+          ## this is the output of the job, it can be used in the next steps of the workflow or in the calling workflow, this is useful for reusable workflows, allowing to pass outputs to the calling workflow
+          ## the "jobs.deploy.outputs.outcome" is the output of the deploy job, it can be used in the next steps of the workflow or in the calling workflow, this is useful for reusable workflows, allowing to pass outputs to the calling workflow
+          ## this is useful for reusable workflows, allowing to pass outputs to the calling workflow, this is useful for reusable workflows, allowing to pass outputs to the calling workflow
  #   secret: 
  #      GITHUB_TOKEN: 
  #        description: 'GitHub token for authentication'
@@ -21,6 +28,8 @@ on:
     
 jobs:
   deploy:
+    outputs:
+       outcome: ${{ steps.set-reult.outputs.step-result }} ## This is used to set the output of the job, it can be used in the next steps of the workflow or in the calling workflow
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -36,3 +45,10 @@ jobs:
         run: ls -R
       - name: Output information
         run: echo "Deploying & uploading"
+      - name: Set result outputs
+        id: set-result
+        run: echo "::set-output  name=step-result::success" ## This is used to set the output of the step, it can be used in the next steps of the workflow or in the calling workflow
+        ## set-output : means we are setting the output of the step, it can be used in the next steps of the workflow or in the calling workflow, this is useful for reusable workflows, allowing to pass outputs to the calling workflow
+        ## name=step-result to the calling
+        ## ::success    this is the value of the output, it can be anything, here we are just setting it to success, this can be used in the next steps of the workflow or in the calling workflow
+        ##The sucess will be stored in the, step-result variable in the calling workflow 
