@@ -27,6 +27,6 @@ jobs:
             ##here .inputs.atifact-name is the input defined in the workflow_call section, it is used to pass the name of the artifact to download, this is useful for reusable workflows, allowing to pass parameters to the workflow
             ##name: dist-files ## This is the name of the artifact uploaded in the build job, anytime we use anything but dist-files this workflow will not be workable
       - name: List files 
-        run: ls -
+        run: ls -R
       - name: Output information
         run: echo "Deploying & uploading"

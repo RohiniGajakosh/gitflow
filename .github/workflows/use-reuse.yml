@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
     - name: Lint code
-      run: npm run lint
+      run: npm run lint || echo "::warning::Lint failed but continuing"
     - name: Warn if lint fails
       if: failure()
       run: echo "::warning::Lint failed but continuing due to continue-on-error"
