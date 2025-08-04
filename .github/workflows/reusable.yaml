@@ -1,10 +1,32 @@
 name: Reusable Deploy
-on: workflow_call
+
+on: 
+ workflow_call:
+     inputs: ## This is the inputs section, it defines the inputs that can be passed to the workflow when it is called, 
+         ## this is useful for reusable workflows, allowing to pass parameters to the workflow
+         ## https://docs.github.com/en/actions/using-workflows/reusing-workflows#defining-inputs-for-a-reusable-workflow
+        atifact-name: 
+         description: 'Name of the artifact to download'
+         required: true ## This input is required, if not provided the workflow will fail, if set to false it will not be required
+         type: string ## This is the type of the input, can be string, boolean, number, array, object, etc.
+         default: 'dist' ## This is the default value for the input, if not provided the workflow will use this value
+          ## This is the name of the artifact to download, it should match the name of the
+    
+    
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/checkout@v4
+      - name: Get code
+        uses: actions/download-artifact@v4
+        with: 
+            name: ${{ inputs.atifact-name }} ## this is the name of the artifact to download, it should match the name of the artifact uploaded in the build job
+            ## we are giving  ${{ inputs.atifact-name }} as input to the workflow, this will be used to download the artifact uploaded in the build job, the refrence calls for this input is in the reusable workflow file, it is used to download the artifact uploaded in the build job
+            ##here .inputs.atifact-name is the input defined in the workflow_call section, it is used to pass the name of the artifact to download, this is useful for reusable workflows, allowing to pass parameters to the workflow
+            ##name: dist-files ## This is the name of the artifact uploaded in the build job, anytime we use anything but dist-files this workflow will not be workable
+      - name: List files 
+        run: ls -
       - name: Output information
         run: echo "Deploying & uploading"
