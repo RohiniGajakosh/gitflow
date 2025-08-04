@@ -11,6 +11,12 @@ on:
          type: string ## This is the type of the input, can be string, boolean, number, array, object, etc.
          default: 'dist' ## This is the default value for the input, if not provided the workflow will use this value
           ## This is the name of the artifact to download, it should match the name of the
+     secret: 
+        GITHUB_TOKEN: 
+          description: 'GitHub token for authentication'
+          required: true ## This input is required, if not provided the workflow will fail
+          type: string ## This is the type of the input, can be string, boolean, number, array, object, etc.
+          default: ${{ secrets.GITHUB_TOKEN }} ## This is the default value for the input, if not provided the workflow will use this value
     
     
 jobs:

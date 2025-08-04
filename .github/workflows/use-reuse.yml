@@ -67,6 +67,9 @@ jobs:
     uses: ./.github/workflows/reusable.yaml ## This is the reusable workflow that will be called by this job
     with:
       atifact-name: dist-files ## This is the name of the artifact to download, it should match the name of the artifact uploaded in the build job
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} ## This is the GitHub token that will be used to authenticate the workflow, it is required for the reusable workflow to work
+      ## we are giving  ${{ secrets.GITHUB_TOKEN }} as input to the workflow, this will be used to authenticate the workflow, the refrence calls for this input is in the reusable workflow file, it is used to authenticate the workflow
  report:
     needs: [lint, deploy]
     if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
