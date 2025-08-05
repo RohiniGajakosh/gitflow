@@ -57,7 +57,7 @@ jobs:
         id: build-website
         run: npm run build
       - name: Upload artifacts
-        if: steps.build-website.outcome == 'failure' ## This step will only run if the test step is successful, meaning the dependencies are cached
+        if: steps.build-website.outcome == 'success' ## This step will only run if the test step is successful, meaning the dependencies are cached
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
