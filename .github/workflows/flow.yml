@@ -72,7 +72,7 @@ jobs:
         run: echo "Deploying..."
   report:
     needs: [lint, deploy]
-    if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
+    if: success() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
     runs-on: ubuntu-latest
     steps:
       - name: Output infroamtion
