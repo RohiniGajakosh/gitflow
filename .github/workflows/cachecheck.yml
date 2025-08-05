@@ -3,7 +3,8 @@
 ### https://github.com/sersoft-gmbh/setup-gh-cli-action
 ##Retriggering to run a chcek on the cache_if the job will skipp or not, 2nd retrigeer
 name: kakeh
-on: push
+#on: push
+on: workflow_dispatch
 
 jobs:
   test:

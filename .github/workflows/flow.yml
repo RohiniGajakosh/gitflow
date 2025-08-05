@@ -1,9 +1,7 @@
 ##https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability
-###https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
-name: Continue
-on: workflow_dispatch
-#on:
-#  push:
+name: Website Deployment
+on:
+  push
   # branches:
   #   - main
   #   - master
@@ -11,6 +9,7 @@ on: workflow_dispatch
   #   - rohini
 jobs:
   lint:
+    if: always() ## This job will always run, regardless of the outcome of previous jobs
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -19,31 +18,26 @@ jobs:
         id: cache
         uses: actions/cache@v3
         with:
-          path: ~/.npm
+          path: ~/.npm ## This is the path to cache the npm dependencies, the dependencies are stored in the ~/.npm directory
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, meaning the dependencies are not cached
         run: npm ci
       - name: Lint code
-        continue-on-error: true ## This step will continue even if it fails, useful for testing purposes
         run: npm run lint
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Test code
-        continue-on-error: true ## This step will continue even if it fails, useful for testing purposes
         id: run-tests
         run: npm run test
       - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure' ## This step is condition for next step only runs if this step fails   ###https://docs.github.com/en/actions/reference/contexts-reference all the refrence contexts and syntax can be found here
+        ##faliure() always returns true if any job or functions fails, or previous step fails, sucess() reuts true when none of the previous step fails, always() returns true no matter what the previous step returns, cancelled() retuns true when the workflow is cancelled, success() returns true when the previous step is successful
         uses: actions/upload-artifact@v4
         with:
           name: test-report
@@ -54,12 +48,6 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Build website

@@ -2,7 +2,8 @@
 ###https://github.com/marketplace/actions/setup-github-cli
 ##xfgsdsdbsdfgfd
 name: cache
-on: push
+#on: push
+on: workflow_dispatch
 
 jobs:
   test:

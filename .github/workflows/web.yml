@@ -23,7 +23,7 @@ jobs:
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true' ## This step will only run if the cache is not hit, i.e., dependencies are not cached
-        ## to call the step output, we use steps.<step_id>.outputs.<output_name>
+        ## to call the step output, we use steps.<step_id>.outputs.git_defined
         run: npm ci
       - name: Lint code
         run: npm run lint
