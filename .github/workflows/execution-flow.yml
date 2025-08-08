@@ -80,26 +80,24 @@ jobs:
       - name: Deploy
         run: echo "Deploying..."
   report:
-    needs: [lint, test, build, deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - name: conditonal
-        run: |
-          if: ${{ faliure() && (
-          needs.lint.result == 'success' &&
-          needs.test.result == 'success' &&
-          needs.build.result == 'success' &&
-          needs.deploy.result == 'success'
-               ) }} ## This job will only run if all previous jobs are successful
-             echo "All jobs completed successfully."
-          else: ${{ always() && (
-              contains(join(needs.lint.result, needs.test.result, needs.build.result, needs.deploy.result), 'failure')
-              ) }} 
-          echo "One or more jobs failed hence this job will run."
-      - name: Output infroamtion
-        run: |
-          echo "Linting completed successfully."
-          echo "Testing completed successfully."
-          echo "Build completed successfully."
-          echo "Deployment completed successfully."
-          echo "${{toJSON(github)}}"
+   needs: [lint, test, build, deploy]
+   # run no matter what, then branch per-step
+   if: ${{ always() }}
+   runs-on: ubuntu-latest
+   steps:
+   - name: Success summary
+     if: ${{ needs.lint.result == 'success' &&
+             needs.test.result == 'success' &&
+             needs.build.result == 'success' &&
+             needs.deploy.result == 'success' }}
+     run: echo "All jobs completed successfully."
+   - name: Failure summary
+     # any upstream failure OR cancelled
+     if: ${{ contains(join(needs.*.result, ','), 'failure') ||
+             contains(join(needs.*.result, ','), 'cancelled') }}
+     run: |
+       echo "One or more jobs failed or were cancelled."
+       echo "lint=${{ needs.lint.result }}"
+       echo "test=${{ needs.test.result }}"
+       echo "build=${{ needs.build.result }}"
+       echo "deploy=${{ needs.deploy.result }}"
