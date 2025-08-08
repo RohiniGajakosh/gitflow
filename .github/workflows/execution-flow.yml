@@ -3,11 +3,11 @@ name: Website Deployment
 on: workflow_dispatch
 #on:
 #  push
-  # branches:
-  #   - main
-  #   - master
-  #   - raj
-  #   - rohini
+# branches:
+#   - main
+#   - master
+#   - raj
+#   - rohini
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -50,9 +50,8 @@ jobs:
           name: test-report
           path: test.json
 
-
   build:
-    needs: [ lint, test ] ## This job depends on the lint and test jobs, it will only run if both jobs are successful
+    needs: [lint, test] ## This job depends on the lint and test jobs, it will only run if both jobs are successful
     if: ${{ needs.lint.result == 'success' && needs.test.result == 'success' }} ## This job will only run if the lint and test jobs are successful
     runs-on: ubuntu-latest
     steps:
@@ -84,21 +83,21 @@ jobs:
     needs: [lint, test, build, deploy]
     runs-on: ubuntu-latest
     steps:
-    - name: conditonal  
-      run: |
-        if: ${{ always() && (
-        needs.lint.result == 'success' &&
-        needs.test.result == 'success' &&
-        needs.build.result == 'success' &&
-        needs.deploy.result == 'success'
-             ) }} ## This job will only run if all previous jobs are successful
-           echo "All jobs completed successfully."
-        else: ${{ always() && (
-            contains(join(needs.lint.result, needs.test.result, needs.build.result, needs.deploy.result), 'failure')
-            ) }} 
-        echo "One or more jobs failed hence this job will run."
-    - name: Output infroamtion
-      run: |
+      - name: conditonal
+        run: |
+          if: ${{ faliure() && (
+          needs.lint.result == 'success' &&
+          needs.test.result == 'success' &&
+          needs.build.result == 'success' &&
+          needs.deploy.result == 'success'
+               ) }} ## This job will only run if all previous jobs are successful
+             echo "All jobs completed successfully."
+          else: ${{ always() && (
+              contains(join(needs.lint.result, needs.test.result, needs.build.result, needs.deploy.result), 'failure')
+              ) }} 
+          echo "One or more jobs failed hence this job will run."
+      - name: Output infroamtion
+        run: |
           echo "Linting completed successfully."
           echo "Testing completed successfully."
           echo "Build completed successfully."
