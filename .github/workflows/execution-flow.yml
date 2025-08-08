@@ -11,6 +11,7 @@ on: workflow_dispatch
 jobs:
   lint:
     runs-on: ubuntu-latest
+    continue-on-error: true ## This job will continue even if it fails, useful for testing purposes
     steps:
       - name: Get code
         uses: actions/checkout@v4
@@ -43,7 +44,8 @@ jobs:
           name: test-report
           path: test.json
   build:
-    needs: test
+    needs: [ lint, test ] ## This job depends on the lint and test jobs, it will only run if both jobs are successful
+    if: ${{ needs.lint.result == 'success' && needs.test.result == 'success' }} ## This job will only run if the lint and test jobs are successful
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -71,12 +73,24 @@ jobs:
       - name: Deploy
         run: echo "Deploying..."
   report:
-    needs: [lint, deploy]
-    if: failure() ### This job will only run if any of the previous jobs fail because faliure() returns true if any of the previous jobs fail
+    needs: [lint, test, build, deploy]
     runs-on: ubuntu-latest
     steps:
-      - name: Output infroamtion
-        run: |
+    - name: conditonal  
+      run: |
+        if: ${{ always() && (
+        needs.lint.result == 'success' &&
+        needs.test.result == 'success' &&
+        needs.build.result == 'success' &&
+        needs.deploy.result == 'success'
+             ) }} ## This job will only run if all previous jobs are successful
+           echo "All jobs completed successfully."
+        else: ${{ always() && (
+            contains(join(needs.lint.result, needs.test.result, needs.build.result, needs.deploy.result), 'failure')
+            ) }} 
+        echo "One or more jobs failed hence this job will run."
+    - name: Output infroamtion
+      run: |
           echo "Linting completed successfully."
           echo "Testing completed successfully."
           echo "Build completed successfully."
