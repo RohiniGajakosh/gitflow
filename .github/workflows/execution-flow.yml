@@ -43,6 +43,14 @@ jobs:
         with:
           name: test-report
           path: test.json
+      - name: Upload test report on failure only
+        if: ${{ failure() && steps.run-tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
+
+
   build:
     needs: [ lint, test ] ## This job depends on the lint and test jobs, it will only run if both jobs are successful
     if: ${{ needs.lint.result == 'success' && needs.test.result == 'success' }} ## This job will only run if the lint and test jobs are successful
